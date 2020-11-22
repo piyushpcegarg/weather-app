@@ -1,6 +1,8 @@
 package com.piyushgarg.controller;
 
-import com.piyushgarg.model.WeatherDto;
+import java.util.List;
+
+import com.piyushgarg.model.TemperatureDto;
 import com.piyushgarg.service.WeatherService;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +19,7 @@ public class WeatherController {
     }
 
     @GetMapping(path = "/weather/{cityId}")
-    public WeatherDto getWeatherInfo(@PathVariable("cityId") Integer cityId ) {
+    public List<TemperatureDto> getWeatherInfo(@PathVariable("cityId") Integer cityId ) {
 
         return weatherService.getWeatherInfo(cityId);
     }

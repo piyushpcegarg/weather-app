@@ -9,5 +9,6 @@ public class TemperatureDto {
     private Double max;
     private Double min;
     private String description;
+    private String suggestion;
     
 }

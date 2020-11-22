@@ -22,6 +22,7 @@ interface Temperature {
   max: number
   min: number
   description: string
+  suggestion: string
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -42,17 +43,13 @@ function App() {
   const [cities, setCities] = React.useState<City[]>([]);
   const [temperature, setTemperature] = React.useState<Temperature[]>([]);
   const [cityId, setCityId] = React.useState('');
-  const [suggestion, setSuggestion] = React.useState('');
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCityId(event.target.value);
 
     fetch('http://localhost:8080/weather/' + event.target.value)
       .then(response => response.json())
-      .then(data => {
-        setTemperature(data.temperature);
-        setSuggestion(data.suggestion);
-      })
+      .then(data => setTemperature(data))
       .catch((error) => {
         console.error('Error:', error);
       });
@@ -95,6 +92,7 @@ function App() {
               <TableCell>Max&nbsp;(Celcius)</TableCell>
               <TableCell>Min&nbsp;(Celcius)</TableCell>
               <TableCell>Weather</TableCell>
+              <TableCell>Suggestion</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -106,12 +104,12 @@ function App() {
                 <TableCell>{row.max}</TableCell>
                 <TableCell>{row.min}</TableCell>
                 <TableCell>{row.description}</TableCell>
+                <TableCell>{row.suggestion}</TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
-      <h5>Suggestion: {suggestion}</h5>
     </div>
   );
 }

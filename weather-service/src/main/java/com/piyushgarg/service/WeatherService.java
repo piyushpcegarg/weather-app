@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.piyushgarg.model.City;
 import com.piyushgarg.model.TemperatureDto;
-import com.piyushgarg.model.WeatherDto;
 import com.piyushgarg.repository.CityRepository;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -43,7 +42,7 @@ public class WeatherService {
         this.cityRepository = cityRepository;
     }
 
-    public WeatherDto getWeatherInfo(Integer cityId) {
+    public List<TemperatureDto> getWeatherInfo(Integer cityId) {
 
         City city = cityRepository.findById(cityId).orElse(null);
         if (city == null) {
@@ -56,10 +55,9 @@ public class WeatherService {
     }
     
 
-    private WeatherDto convert(ResponseEntity<String> response) {
+    private List<TemperatureDto> convert(ResponseEntity<String> response) {
         try {
             JsonNode root = objectMapper.readTree(response.getBody());
-            WeatherDto weatherDto = new WeatherDto();
 
             List<TemperatureDto> temperatureDtos = new ArrayList<>();
 
@@ -77,34 +75,26 @@ public class WeatherService {
                 temperatureDto.setMax(temperature.path("max").asDouble());
                 temperatureDto.setMin(temperature.path("min").asDouble());
                 temperatureDto.setDescription(node.path("weather").get(0).path("main").asText());
+                temperatureDto.setSuggestion(getSuggestion(temperatureDto));
                 
                 temperatureDtos.add(temperatureDto);
             }
 
-            weatherDto.setTemperature(temperatureDtos);
-            getSuggestion(weatherDto);
-            return weatherDto;
+            return temperatureDtos;
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Error parsing JSON", e);
         }
     }
 
-    private void getSuggestion(WeatherDto weatherDto) {
-
-        List<TemperatureDto> temperatureDtos = weatherDto.getTemperature();
+    private String getSuggestion(TemperatureDto temperatureDto) {
 
         String suggestion = "";
 
-        for (TemperatureDto temperatureDto : temperatureDtos) {
-
-            if (temperatureDto.getDescription().equals("Rain")) {
-                suggestion = "Carry Umbrella";
-                break;
-            } else if (temperatureDto.getMax() > 40) {
-                suggestion = "Carry Sun Lotion";
-                break;
-            }
+        if (temperatureDto.getDescription().equals("Rain")) {
+            suggestion = "Carry Umbrella";
+        } else if (temperatureDto.getMax() > 40) {
+            suggestion = "Use Sunscreen Lotion";
         }
-        weatherDto.setSuggestion(suggestion);
+        return suggestion;
     }
 }
