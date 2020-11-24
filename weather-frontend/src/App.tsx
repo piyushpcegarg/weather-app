@@ -12,17 +12,17 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Paper from '@material-ui/core/Paper';
 
 interface City {
-  id: number
-  name: string
+  id: number;
+  name: string;
   country: string;
 }
 
 interface Temperature {
-  date: string
-  max: number
-  min: number
-  description: string
-  suggestion: string
+  date: string;
+  max: number;
+  min: number;
+  description: string;
+  suggestion: string;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
